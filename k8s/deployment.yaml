@@ -37,6 +37,12 @@ spec:
                   name: claude-runner-secrets
                   key: ANTHROPIC_API_KEY
                   optional: true
+            - name: CLAUDE_CODE_OAUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: claude-runner-secrets
+                  key: CLAUDE_CODE_OAUTH_TOKEN
+                  optional: true
             - name: GITHUB_TOKEN
               valueFrom:
                 secretKeyRef:
