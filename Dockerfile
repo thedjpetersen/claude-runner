@@ -51,8 +51,9 @@ RUN curl -fsSL https://github.com/zellij-org/zellij/releases/latest/download/zel
 # Claude Code (global npm install)
 RUN npm install -g @anthropic-ai/claude-code
 
-# Create non-root user with sudo access
-RUN useradd -m -s /bin/bash -u 1000 claude \
+# Create non-root user with sudo access (remove default ubuntu user that has UID 1000)
+RUN userdel -r ubuntu 2>/dev/null || true \
+    && useradd -m -s /bin/bash -u 1000 claude \
     && echo "claude ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/claude
 
 # Skeleton dotfiles for first-run copy
