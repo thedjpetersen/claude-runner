@@ -19,6 +19,13 @@ spec:
     spec:
       nodeSelector:
         nodepool: worker
+      initContainers:
+        - name: fix-permissions
+          image: busybox:1.37
+          command: ["sh", "-c", "chown -R 1000:1000 /home/claude"]
+          volumeMounts:
+            - name: home
+              mountPath: /home/claude
       containers:
         - name: claude-runner
           image: ghcr.io/thedjpetersen/claude-runner:latest
