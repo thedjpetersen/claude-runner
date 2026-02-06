@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: claude-runner
+  namespace: claude-runner
+  labels:
+    app: claude-runner
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: claude-runner
+  template:
+    metadata:
+      labels:
+        app: claude-runner
+    spec:
+      nodeSelector:
+        nodepool: worker
+      containers:
+        - name: claude-runner
+          image: ghcr.io/thedjpetersen/claude-runner:latest
+          imagePullPolicy: Always
+          env:
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: claude-runner-secrets
+                  key: ANTHROPIC_API_KEY
+                  optional: true
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: claude-runner-secrets
+                  key: GITHUB_TOKEN
+                  optional: true
+          volumeMounts:
+            - name: home
+              mountPath: /home/claude
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 4Gi
+      volumes:
+        - name: home
+          persistentVolumeClaim:
+            claimName: claude-runner-home
+      restartPolicy: Always
